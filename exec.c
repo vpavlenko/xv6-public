@@ -29,6 +29,28 @@ exec(char *path, char **argv)
   ilock(ip);
   pgdir = 0;
 
+  // Chech shebang
+  char first_two_bytes[2];
+  if (readi(ip, first_two_bytes, 0, 2) != 2)
+    goto bad;
+  if (first_two_bytes[0] == '#' && first_two_bytes[1] == '!') {
+    char cmd_name[100];
+    char** new_argv[sizeof(char*)* (MAXARG + 1)];
+    struct cmd* cmd;
+    readi(ip, cmd_name, 2, 100);
+    cmd = parsecmd(cmd_name);
+
+    if (cmd->type != EXEC) {
+      cprintf("command type in shebang is wrong");
+    }
+    for (i = 0; (*execcmd)cmd->argv[i] != 0;i++) {
+      new_argv[i] = (*execcmd)cmd->argv[i];
+    }
+    new_argv[i] = path;
+    exec((*execcmd)cmd->argv[0], new_argv);
+  }
+
+
   // Check ELF header
   if(readi(ip, (char*)&elf, 0, sizeof(elf)) != sizeof(elf))
     goto bad;
