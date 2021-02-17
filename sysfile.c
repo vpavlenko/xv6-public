@@ -73,6 +73,57 @@ sys_read(void)
   int n;
   char *p;
 
+  // asm volatile("movb  $182,%al");
+  // asm volatile("outb  %al,$0x43");
+  // asm volatile("movw  %cx,%ax");
+  // asm volatile("outb  %al,$0x42");
+  // asm volatile("movb  %ah,%al");
+  // asm volatile("outb  %al,$0x42");
+  // asm volatile("inb $0x61,%al");
+  // asm volatile("movb $0B00000011,%al");
+  // asm volatile("movb $0B11111100,%al");
+  // // asm volatile("outb  %al,$0x61");
+
+  // asm volatile("movb  $1,%al");
+  // asm volatile("outb  %al,$0x61");
+
+  cprintf("init speaker 1\n");
+
+  asm volatile("movb  $182,%al");
+  asm volatile("outb  %al,$0x43");
+  asm volatile("movb  $47,%al");
+  asm volatile("outb  %al,$0x42");
+  asm volatile("movb  $21,%al");
+  asm volatile("outb  %al,$0x42");
+  asm volatile("movb $0B00000011,%al");
+  asm volatile("outb  %al,$0x61");
+
+  asm volatile("movl $50000000,%eax");
+  asm volatile("loop_sound: decl %eax");
+  asm volatile("jnz loop_sound");
+
+  asm volatile("movb $0B11111100,%al");
+  asm volatile("outb  %al,$0x61");
+
+  asm volatile("movb  $182,%al");
+  asm volatile("outb  %al,$0x43");
+  asm volatile("movb  $47,%al");
+  asm volatile("outb  %al,$0x42");
+  asm volatile("movb  $23,%al");
+  asm volatile("outb  %al,$0x42");
+  asm volatile("movb $0B00000011,%al");
+  asm volatile("outb  %al,$0x61");
+
+  asm volatile("movl $50000000,%eax");
+  asm volatile("loop_sound2: decl %eax");
+  asm volatile("jnz loop_sound2");
+
+  asm volatile("movb $0B11111100,%al");
+  asm volatile("outb  %al,$0x61");
+
+
+  cprintf("delay finished\n");
+
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
   return fileread(f, p, n);
